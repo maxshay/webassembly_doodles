@@ -1,0 +1,20 @@
+{
+  "name": "wasm-intro",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "wasm-build": "del src\\public\\graphics.wasm & clang --target=wasm32 -W -Wall -v -Os -flto -nostdlib -std=c99 -Wl,--no-entry -Wl,--export-all -o src\\public\\test.wasm hello\\test.c",
+    "wasm-build-game": "del src\\public\\game.wasm & clang --target=wasm32 -W -Wall -v -Os -flto -nostdlib -std=c99 -Wl,--no-entry -Wl,--export-all -o src\\public\\game.wasm hello\\game.c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "max",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}

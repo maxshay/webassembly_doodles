@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="bg-light m-0 p-0">
+    <div class="container mt-4">
+      <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+          <ul class="navbar-nav me-auto mb-2">
+            <li class="nav-item"><a class="nav-link" href="/">home</a></li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="/game.html">game</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="container overflow-auto border rounded mt-4 bg-white p-5">
+      <h1>Game</h1>
+      <canvas
+        id="canvas"
+        width="900"
+        height="900"
+        style="border: 1px dashed black"
+      ></canvas>
+    </div>
+    <script>
+      fetch("game.wasm", { headers: { "Content-Type": "application/wasm" } })
+        .then((response) => response.arrayBuffer())
+        .then((bits) => WebAssembly.instantiate(bits))
+        .then((obj) => {
+          eActive = new Int8Array(
+            obj.instance.exports.memory.buffer,
+            obj.instance.exports.eActive.value,
+            10
+          );
+          eX = new Float32Array(
+            obj.instance.exports.memory.buffer,
+            obj.instance.exports.eX.value,
+            10
+          );
+          eY = new Float32Array(
+            obj.instance.exports.memory.buffer,
+            obj.instance.exports.eY.value,
+            10
+          );
+          score = new Int32Array(
+            obj.instance.exports.memory.buffer,
+            obj.instance.exports.score.value,
+            1
+          );
+
+          const CANVAS = document.getElementById("canvas");
+          const CONTEXT = document.getElementById("canvas").getContext("2d");
+
+          let offsetX = CANVAS.getBoundingClientRect().left;
+          let offsetY = CANVAS.getBoundingClientRect().top;
+
+          CONTEXT.font = "100px Arial";
+          var lastFrameTimestamp = 0;
+          window.requestAnimationFrame(
+            (loop = (frameTimestamp) => {
+              obj.instance.exports.loop(
+                (frameTimestamp - lastFrameTimestamp) / 1000
+              );
+              CONTEXT.clearRect(0, 0, 900, 900);
+              CONTEXT.fillText(score[0], 400, 400);
+
+              for (var e = 0; e < 10; ++e)
+                if (eActive[e] === 1)
+                  CONTEXT.fillRect(eX[e] - 50, eY[e] - 50, 100, 100);
+              lastFrameTimestamp = frameTimestamp;
+              window.requestAnimationFrame(loop);
+            })
+          );
+          document.addEventListener("mousedown", (event) => {
+            let returned = obj.instance.exports.onClick(
+              event.clientX - offsetX,
+              event.clientY - offsetY
+            );
+          });
+        });
+    </script>
+  </body>
+</html>
