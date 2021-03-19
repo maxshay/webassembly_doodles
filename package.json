@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "wasm-build": "del src\\public\\graphics.wasm & clang --target=wasm32 -W -Wall -v -Os -flto -nostdlib -std=c99 -Wl,--no-entry -Wl,--export-all -o src\\public\\test.wasm hello\\test.c",
+    "wasm-build": "del src\\public\\graphics.wasm & clang --target=wasm32 -W -Wall -v -Os -flto -nostdlib -std=c99 -Wl,--no-entry -Wl,--export-all -o src\\public\\graphics.wasm hello\\graphics.c",
     "wasm-build-game": "del src\\public\\game.wasm & clang --target=wasm32 -W -Wall -v -Os -flto -nostdlib -std=c99 -Wl,--no-entry -Wl,--export-all -o src\\public\\game.wasm hello\\game.c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
